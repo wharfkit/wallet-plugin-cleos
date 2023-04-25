@@ -31,13 +31,13 @@ export class WalletPluginCleos extends AbstractWalletPlugin implements WalletPlu
     /**
      * The metadata for the wallet plugin to be displayed in the user interface.
      */
-    readonly metadata: WalletPluginMetadata = {
+    readonly metadata: WalletPluginMetadata = WalletPluginMetadata.from({
         name: 'cleos',
         description: 'Copy and paste the transactions to sign in cleos.',
         logo: 'base_64_encoded_image',
         homepage: 'https://github.com/antelopeio/leap',
         download: 'https://github.com/antelopeio/leap',
-    }
+    })
     /**
      * A unique string identifier for this wallet plugin.
      *
@@ -115,7 +115,16 @@ export class WalletPluginCleos extends AbstractWalletPlugin implements WalletPlu
                         data: {
                             label: 'Copy to clipboard',
                             icon: 'copy',
-                            onclick: () => navigator.clipboard.writeText(command),
+                            onClick: () => {
+                                // Ensure the copy to clipboard will work
+                                if (!navigator.clipboard || !window.isSecureContext) {
+                                    alert(
+                                        'Copy to clipboard is not supported in this browser. Please copy the command manually.'
+                                    )
+                                } else {
+                                    navigator.clipboard.writeText(command)
+                                }
+                            },
                         },
                     },
                 ],
